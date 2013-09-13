@@ -8,12 +8,12 @@ function info_seq = information_sequence(graph, directed, src, L, mode)
 %
 %   graph: (matrix)edges list or adjacency matrix or 2D-lattice edges list,
 %          determined by mode default: edges list.
-%directed: (integer, 0/1)0-undirected, 1-directed
+%directed: (integer, 0/1)0-undirected, 1-directed.
 %     src: (integer)the starting node, 
 %          in [0~N-1](edges list),
-%          in [1~N](adjacent matrix).
-%          in (1, 1) ~ (N, N) (2D-lattice)
-%       L: distance from src
+%          in [1~N](adjacent matrix),
+%          in (1, 1) ~ (N, N) (2D-lattice).
+%       L: distance from src.
 %    mode: (string)'edges'-graph is represented by edges list, 
 %                  'adj'-by adjacency matrix.
 %
