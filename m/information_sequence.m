@@ -55,18 +55,16 @@ if strcmp(mode, 'edges') == 1
     assert(src > -1 && src < N, msg);
         
     neighbors = cell(L, 1);
-    
-    %shl_idx = 1
-    shl_idx = 1;
-    nodes = unique([graph(graph(:, 1) == src, 2);
-                    graph(graph(:, 2) == src, 1)]);
-    neighbors{shl_idx} = nodes;
-    all_nodes = [nodes; src];
-    
-    info_seq = nodes;
-    
-    %shl_idx = 2...L
+
     if directed == 0
+        shl_idx = 1;
+        nodes = unique([graph(graph(:, 1) == src, 2);
+                        graph(graph(:, 2) == src, 1)]);
+        neighbors{shl_idx} = nodes;
+        all_nodes = [nodes; src];
+
+        info_seq = nodes;
+        
         while ~isempty(nodes) && shl_idx < L
             shl_idx = shl_idx + 1;
             nodes = unique([graph(ismember(graph(:, 1), nodes), 2);
@@ -87,6 +85,13 @@ if strcmp(mode, 'edges') == 1
             end
         end
     elseif directed == 1
+        shl_idx = 1;
+        nodes = unique(graph(graph(:, 1) == src, 2));
+        neighbors{shl_idx} = nodes;
+        all_nodes = [nodes; src];
+
+        info_seq = nodes;
+        
         while ~isempty(nodes) && shl_idx < L
             shl_idx = shl_idx + 1;
             
@@ -111,23 +116,21 @@ if strcmp(mode, 'edges') == 1
     
 elseif strcmp(mode, 'adj') == 1
     [n, m] = size(graph);
-    
+    error('Not Implemented');
 elseif strcmp(mode, '2D-lattice-edges') == 1
     assert(max(size(src)) == 2, 'src should be a 2d coordinate');
-    
-    %shl_idx = 1
-    shl_idx = 1;
-    nodes = unique([graph(graph(:, 1) == src(1) & ...
-                          graph(:, 2) == src(2), 3:4);
-                    graph(graph(:, 3) == src(1) & ...
-                          graph(:, 4) == src(2), 1:2)], 'rows');
-    neighbors{shl_idx} = nodes;
-    all_nodes = [nodes; src];
-    
-    info_seq = nodes;
-    
-    %shl_idx = 2...L
+
     if directed == 0
+        shl_idx = 1;
+        nodes = unique([graph(graph(:, 1) == src(1) & ...
+                              graph(:, 2) == src(2), 3:4);
+                        graph(graph(:, 3) == src(1) & ...
+                              graph(:, 4) == src(2), 1:2)], 'rows');
+        neighbors{shl_idx} = nodes;
+        all_nodes = [nodes; src];
+
+        info_seq = nodes;
+        
         while ~isempty(nodes) && shl_idx < L
             shl_idx = shl_idx + 1;
             nodes = [graph(ismember(graph(:, 1:2), nodes, 'rows'), 3:4);
@@ -152,6 +155,14 @@ elseif strcmp(mode, '2D-lattice-edges') == 1
             end
         end
     elseif directed == 1
+        shl_idx = 1;
+        nodes = unique(graph(graph(:, 1) == src(1) & ...
+                             graph(:, 2) == src(2), 3:4), 'rows');
+        neighbors{shl_idx} = nodes;
+        all_nodes = [nodes; src];
+
+        info_seq = nodes;
+        
         while ~isempty(nodes) && shl_idx < L
             shl_idx = shl_idx + 1;
             
@@ -159,6 +170,19 @@ elseif strcmp(mode, '2D-lattice-edges') == 1
             nodes = unqiue(nodes);
             neighbors{shl_idx} = setdiff(nodes, all_nodes, 'rows');
             all_nodes = union(all_nodes, nodes, 'rows');
+        end
+        
+        %info seq
+        for shl_idx = 1 : L-1
+            nodes = neighbors{shl_idx};
+            for i = 1 : size(nodes, 1)
+                node = nodes(i, :);
+
+                neighbor = graph(graph(:, 1) == node(1) & ...
+                                 graph(:, 2) == node(2), 3:4);
+                neighbor = unique(neighbor, 'rows');
+                info_seq = [info_seq; neighbor];
+            end
         end
     end
         
